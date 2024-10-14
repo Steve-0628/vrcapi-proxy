@@ -1,12 +1,10 @@
 use crate::{
-    fetcher::request_json, global::AUTHORIZATION, init::Data, validate::validate,
-    websocket::spawn_client::spawn_ws_client,
+    fetcher::request_json, global::AUTHORIZATION, init::Data, json::write_json, validate::validate, websocket::spawn_client::spawn_ws_client
 };
 use anyhow::Result;
 use axum::Json;
 use hyper::Method;
 use serde_json::json;
-use uuid::Uuid;
 
 #[derive(serde::Deserialize)]
 pub(crate) struct Query {
@@ -23,8 +21,8 @@ pub(crate) async fn api_twofactor(
         two_factor_code,
         two_factor_type,
     }): Json<Query>,
-) -> Result<bool> {
-    drop(validate(auth)?);
+) -> Result<String> {
+    drop(validate(auth.clone())?);
 
     request_json(
         Method::POST,
@@ -34,7 +32,6 @@ pub(crate) async fn api_twofactor(
     )
     .await?;
 
-    let id = Uuid::new_v4().to_string();
     let data = {
         let Data { listen, auth, .. } = crate::json::read_json("data.json")?;
         Data {
@@ -46,9 +43,11 @@ pub(crate) async fn api_twofactor(
 
     crate::json::write_json::<Data>(&data, "data.json")?;
 
-    *AUTHORIZATION.1.write().await = data.token;
+    *AUTHORIZATION.1.write().await = data.token.clone();
+
+    write_json(&data, "data.json")?;
 
     spawn_ws_client().await;
 
-    Ok(true)
+    Ok(auth)
 }

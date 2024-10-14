@@ -30,7 +30,9 @@ async fn main() -> Result<()> {
         ..
     } = json::read_json("data.json")?;
 
-    tokio::join!(spawn_ws_client(), internal::init_var::init_var(&token)).1?;
+    if !token.is_empty() {
+        tokio::join!(spawn_ws_client(), internal::init_var::init_var(&token)).1?;
+    }
     drop(token);
 
     let app = Router::new()

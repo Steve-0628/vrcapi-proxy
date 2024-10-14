@@ -5,7 +5,7 @@ use crate::{
 use anyhow::{anyhow, ensure, Result};
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub(super) struct Data {
     pub(super) listen: String,
     pub(super) auth: String,
