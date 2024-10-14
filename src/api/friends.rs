@@ -2,6 +2,7 @@ use crate::global::{FAVORITE_FRIENDS, USERS, WS_HANDLER};
 use crate::user::User;
 use crate::validate::validate;
 use anyhow::{ensure, Result};
+use axum::Json;
 use hyper::StatusCode;
 use serde::Serialize;
 
@@ -15,7 +16,12 @@ async fn validate_(auth: &str) -> Result<()> {
     Ok(())
 }
 
-pub(crate) async fn api_friends(auth: String) -> Result<ResFriend> {
+#[derive(serde::Deserialize)]
+pub(crate) struct Query {
+    auth: String,
+}
+
+pub(crate) async fn api_friends(Json( Query { auth }): Json<Query>) -> Result<ResFriend> {
     validate_(&auth).await?;
 
     let (public, private) = USERS
@@ -29,7 +35,7 @@ pub(crate) async fn api_friends(auth: String) -> Result<ResFriend> {
     Ok(ResFriend { public, private })
 }
 
-pub(crate) async fn api_friends_filtered(auth: String) -> Result<ResFriend> {
+pub(crate) async fn api_friends_filtered(auth: Json<Query>) -> Result<ResFriend> {
     let favorites = FAVORITE_FRIENDS.read().await;
     api_friends(auth).await.map(|mut friends| {
         let fun = |friend: &User| favorites.contains(&friend.id);

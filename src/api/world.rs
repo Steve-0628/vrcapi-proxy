@@ -35,21 +35,21 @@ pub(crate) async fn api_world(Json(Query { auth, world_id }): Json<Query>) -> Re
 #[derive(Serialize, Deserialize)]
 pub(crate) struct World {
     authorId: String,
-    // authorName: String,
+    authorName: String,
     capacity: u32,
     created_at: String,
     description: String,
     favorites: u32,
     featured: bool,
     heat: u32,
-    // id: String,
+    id: String,
     imageUrl: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     instances: Option<Vec<Option<Vec<serde_json::Value>>>>,
     labsPublicationDate: String,
     name: String,
-    namespace: String,
-    // occupants: u32,
+    // namespace: String,
+    occupants: u32,
     organization: String,
     popularity: u32,
     // previewYoutubeId: Option<String>,
@@ -61,7 +61,7 @@ pub(crate) struct World {
     thumbnailImageUrl: String,
     // unityPackages: Vec<UnityPackage>,
     updated_at: String,
-    // version: u32,
+    version: u32,
     visits: u32,
 }
 

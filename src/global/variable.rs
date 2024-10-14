@@ -2,10 +2,11 @@ use crate::user::User;
 use dirs_2::home_dir;
 use once_cell::sync::Lazy;
 use serde::Serialize;
-use std::path::PathBuf;
+use std::{collections::HashMap, path::PathBuf};
 use tokio::sync::RwLock;
 
-pub(crate) const APP_NAME: &str = "vrcapi-proxy";
+pub(crate) const APP_NAME_MAJOR: &str = "vrcapi-proxy";
+pub(crate) const APP_NAME: &str =  "vrcapi-proxy/0.0.1";
 pub(crate) const UA: &str = "User-Agent";
 pub(crate) const COOKIE: &str = "Cookie";
 pub(crate) const INVALID_AUTH: &str = "認証情報が不正です。";
@@ -13,7 +14,7 @@ pub(crate) const INVALID_AUTH: &str = "認証情報が不正です。";
 pub(crate) static DATA_PATH: Lazy<PathBuf> = Lazy::new(|| {
     home_dir()
         .expect("ホームディレクトリの取得に失敗しました。")
-        .join(APP_NAME)
+        .join(APP_NAME_MAJOR)
 });
 
 // Interior mutable

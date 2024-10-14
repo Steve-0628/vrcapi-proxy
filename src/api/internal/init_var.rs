@@ -1,15 +1,12 @@
 use crate::{
-    api::favorites::fetch_favorite_friends, global::USERS,
+    global::USERS,
     internal::fetch_friends::fetch_all_friends, user::User,
 };
 
 use super::user_info::fetch_user_info;
 
 pub(crate) async fn init_var(token: &str) -> anyhow::Result<()> {
-    tokio::try_join!(
-        init_myself_and_friends(token),
-        fetch_favorite_friends(token)
-    )?;
+    init_myself_and_friends(token).await.unwrap();
 
     Ok(())
 }

@@ -6,6 +6,7 @@ use anyhow::Result;
 use axum::Json;
 use hyper::Method;
 use serde_json::json;
+use uuid::Uuid;
 
 #[derive(serde::Deserialize)]
 pub(crate) struct Query {
@@ -33,6 +34,7 @@ pub(crate) async fn api_twofactor(
     )
     .await?;
 
+    let id = Uuid::new_v4().to_string();
     let data = {
         let Data { listen, auth, .. } = crate::json::read_json("data.json")?;
         Data {
